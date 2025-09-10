@@ -16,7 +16,7 @@ files = ['Labo1/Mesures/convertisseur_090925_01.lvm',
          'Labo1/Mesures/voltage_circuit_090925_01.lvm']
 
 filepath = "Labo1/Mesures/convertisseur_débranché_090925_01.lvm"
-
+filepath = files[0]
 
 def read(file_name):
     df = pd.read_csv(file_name, sep="\t", skiprows=22, decimal=",")
@@ -28,15 +28,26 @@ def read(file_name):
 
     return df.to_numpy()[:, :col]
 
-print(read(filepath))
 
-y = read(filepath)[:, 0]
-x = read(filepath)[:, 1]
+def graphiques_scatter(array):
+    plt.clf()
+    bruit = read(files[2])
 
-plt.figure()
-plt.plot(x, y, linewidth=1)
-plt.xlabel("Bruit gaussien")
-plt.ylabel("Amplitude [V]")
-plt.title("Amplitude de la différence de potentiel aux bornes du convertisseur")
-plt.tight_layout()
-plt.show()
+    plt.plot(np.linspace(1, array.shape[0], array.shape[0]), array[:, 0], markersize=0.75, linestyle='none',
+             marker='o')
+    plt.plot(np.linspace(1, array.shape[0], array.shape[0]), bruit[:, 0], markersize=0.75, linestyle='none',
+             marker='o')
+    plt.show()
+
+graphiques_scatter(read(filepath))
+
+# y = read(filepath)[:, 0]
+# x = read(filepath)[:, 1]
+
+# plt.figure()
+# plt.plot(x, y, linewidth=1)
+# plt.xlabel("Bruit gaussien")
+# plt.ylabel("Amplitude [V]")
+# plt.title("Amplitude de la différence de potentiel aux bornes du convertisseur")
+# plt.tight_layout()
+# plt.show()
