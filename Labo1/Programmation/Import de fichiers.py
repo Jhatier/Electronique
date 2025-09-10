@@ -7,13 +7,17 @@ import numpy as np
 files = ['Labo1/Mesures/convertisseur_090925_01.lvm',
          'Labo1/Mesures/convertisseur_débranché_090925_01.lvm',
          'Labo1/Mesures/convertisseur_débranché_090925_02.lvm',
+         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',
          'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',
          'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',
          'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',
          'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',
          'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',
          'Labo1/Mesures/voltage_pile_090925_01.lvm',
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm']
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',
+         'Labo1/Mesures/voltage_circuit_090925_01.lvm',
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'
+         ]
 
 filepath = "Labo1/Mesures/convertisseur_débranché_090925_01.lvm"
 filepath = files[0]
@@ -31,7 +35,7 @@ def read(file_name):
 
 def graphiques_scatter(array):
     plt.clf()
-    bruit = read(files[2])
+    bruit = read(files[3])
 
     plt.plot(np.linspace(1, array.shape[0], array.shape[0]), array[:, 0], markersize=0.75, linestyle='none',
              marker='o')
