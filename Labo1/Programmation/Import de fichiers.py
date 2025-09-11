@@ -32,6 +32,8 @@ def read(file_name):
 
     return df.to_numpy()[:, :col]
 
+def incertitude(filepath, indice_colonne):
+        return (np.max(filepath[indice_colonne])-np.min(filepath[indice_colonne]))/2
 
 def graphiques_scatter(array):
     plt.clf()
