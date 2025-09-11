@@ -4,22 +4,21 @@ import numpy as np
 
 
 # Les fichiers de données dans l'ordres demandés par le protocoles. Cela permet de simplement appeler files[4] par ex.
-files = ['Labo1/Mesures/convertisseur_090925_01.lvm',
-         'Labo1/Mesures/convertisseur_débranché_090925_01.lvm',
-         'Labo1/Mesures/convertisseur_débranché_090925_02.lvm',
-         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',
-         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',
-         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',
-         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',
-         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',
-         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',
-         'Labo1/Mesures/voltage_pile_090925_01.lvm',
-         'Labo1/Mesures/voltage_pile_100925_01.lvm',
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm',
-         'Labo1/Mesures/voltage_circuit_100925_01.lvm'
+files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
+         'Labo1/Mesures/convertisseur_débranché_090925_01.lvm',     #1    
+         'Labo1/Mesures/convertisseur_débranché_090925_02.lvm',     #2
+         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #3
+         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #4
+         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #5
+         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #6
+         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',      #7
+         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',      #8
+         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #9
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #10
+         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #11
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #12
          ]
 
-filepath = "Labo1/Mesures/convertisseur_débranché_090925_01.lvm"
 filepath = files[0]
 
 def read(file_name):
@@ -32,8 +31,9 @@ def read(file_name):
 
     return df.to_numpy()[:, :col]
 
-def incertitude(filepath, indice_colonne):
-        return (np.max(filepath[indice_colonne])-np.min(filepath[indice_colonne]))/2
+def incertitude(array, indice):
+    col = array[:, indice]
+    return 0.5 * (np.max(col) - np.min(col))
 
 def graphiques_scatter(array):
     plt.clf()
@@ -43,17 +43,7 @@ def graphiques_scatter(array):
              marker='o')
     plt.plot(np.linspace(1, array.shape[0], array.shape[0]), bruit[:, 0], markersize=0.75, linestyle='none',
              marker='o')
+    plt.errorbar(np.arange(1, array.shape[0] + 1), array[:, 0], yerr=incertitude(array, 0), fmt='none', elinewidth=0.6, capsize=1.5, alpha=0.6)
     plt.show()
 
 graphiques_scatter(read(filepath))
-
-# y = read(filepath)[:, 0]
-# x = read(filepath)[:, 1]
-
-# plt.figure()
-# plt.plot(x, y, linewidth=1)
-# plt.xlabel("Bruit gaussien")
-# plt.ylabel("Amplitude [V]")
-# plt.title("Amplitude de la différence de potentiel aux bornes du convertisseur")
-# plt.tight_layout()
-# plt.show()
