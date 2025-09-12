@@ -31,6 +31,7 @@ def read(file_name):
 
     return df.to_numpy()[:, :col]
 
+
 def moyenne(file_name):
     return np.average(read(file_name[0]))
 
@@ -47,6 +48,7 @@ def incertitude(array, indice):
     col = array[:, indice]
     return 0.5 * (np.max(col) - np.min(col))
 
+
 def graphiques_scatter(array):
     plt.clf()
     bruit = read(files[3])
@@ -57,5 +59,6 @@ def graphiques_scatter(array):
              marker='o')
     plt.errorbar(np.arange(1, array.shape[0] + 1), array[:, 0], yerr=incertitude(array, 0), fmt='none', elinewidth=0.6, capsize=1.5, alpha=0.6)
     plt.show()
+
 
 graphiques_scatter(read(filepath))
