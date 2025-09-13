@@ -9,18 +9,16 @@ os.makedirs(plot_dir, exist_ok=True)
 
 # Les fichiers de données
 files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
-         'Labo1/Mesures/convertisseur_débranché_090925_01.lvm',     #1    
-         'Labo1/Mesures/convertisseur_débranché_090925_02.lvm',     #2
-         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #3
-         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #4
-         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #5
-         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #6
-         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',      #7
-         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',      #8
-         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #9
-         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #10
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #11
-         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #12
+         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #1
+         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #2
+         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #3
+         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #4
+         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',      #5
+         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',      #6
+         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #7
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #8
+         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #9
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #10
          ]
 
 # Descriptions et légendes
@@ -48,7 +46,7 @@ nom = {0: 'convertisseur',
        12: "circuit"
        }
 
-num = 0     # L'index du fichier utilisé.
+num = 0   
 filepath = files[num]
 
 def read(file_name):
@@ -59,7 +57,6 @@ def read(file_name):
         col = 2
     return df.to_numpy()[:, :col]
 
-# --- FIX: stats sur la colonne (et non la ligne) ---
 def moyenne(file_name, indice):
     return float(np.mean(read(file_name)[:, indice]))
 
@@ -78,9 +75,8 @@ def graphiques_scatter(array):
     fig = plt.gcf()
     fig.set_size_inches(10, 6)
 
-    bruit = read(files[3])
+    bruit = read(files[1])
 
-    # --- FIX: abscisses propres à chaque série ---
     x_sig = np.arange(1, array.shape[0] + 1)
     x_brt = np.arange(1, bruit.shape[0] + 1)
 
