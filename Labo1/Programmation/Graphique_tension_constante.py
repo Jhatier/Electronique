@@ -64,6 +64,18 @@ def read(file_name):
     return df.to_numpy()[:, :col]
 
 
+def moyenne(file_name):
+    return np.average(read(file_name))
+
+
+def variance(file_name):
+    return np.var(read(file_name))
+
+
+def snr(file_name):
+    return moyenne(file_name)**2/variance(file_name)
+
+
 def incertitude(array, indice):
     col = array[:, indice]
     return 0.5 * (np.max(col) - np.min(col))
@@ -89,9 +101,11 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     # On met le titre en dessous pour se conformer aux exigences de Claubine
-    plt.title(f"Fig. 1 La tension dans {description[num]} et la tension mesurée lorsque le signal est nul."
+    plt.title(f"Fig. 1 La tension dans {description[num]} et la tension mesurée lorsque\nle signal est nul."
+              f"La moyenne est de {round(moyenne(filepath), 3)}, la variance est de {variance(filepath): .3e} et "
+              f"le SNR est de {round(snr(filepath), 3)}."
               f"\nLes barres d'incertitudes sur le signal nul sont présentes, mais difficilement visibles.",
-              y=-0.20)
+              y=-0.25)
     
     plt.tight_layout()
     plt.savefig(plot_dir + f"/_{nom[num]}.png")
