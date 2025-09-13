@@ -50,7 +50,7 @@ nom = {0: 'convertisseur',
        12: "circuit"
        }
 
-num = 4     # L'index du fichier utilisé.
+num = 12     # L'index du fichier utilisé.
 filepath = files[num]
 
 def read(file_name):
