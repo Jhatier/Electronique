@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from pathlib import Path
 
 # Choisir le directory pour les figures et le créer s'il n'existe pas.
 plot_dir = os.path.join("Labo1/Figures/tension_constante")
@@ -13,40 +14,34 @@ files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
          'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #2
          'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #3
          'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #4
-         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',      #5
-         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',      #6
-         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #7
-         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #8
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #9
-         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #10
+         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #5
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #6
+         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #7
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #8
          ]
 
 # Descriptions et légendes
 description = {0: 'le convertisseur',
-        4: "la pomme de terre avec une tige d'aluminium et d'inox",
-        5: "la pomme de terre avec une tige d'aluminium et d'inox",
-        6: "la pomme de terre avec une tige d'aluminium et d'acier",
-        7: "la pomme de terre avec une tige d'aluminium et d'acier",
-        8: "la pomme de terre avec une tige d'aluminium et d'acier",
-        9: "la pile",
-        10: "la pile",
-        11: "le circuit",
-        12: "le circuit"
+        2: "la pomme de terre avec une tige d'aluminium et d'inox",
+        3: "la pomme de terre avec une tige d'aluminium et d'inox",
+        4: "la pomme de terre avec une tige d'aluminium et d'acier",
+        5: "la pile",
+        6: "la pile",
+        7: "le circuit",
+        8: "le circuit"
         }
 
 nom = {0: 'convertisseur',
-       4: "aluminium - inox",
-       5: "aluminium - inox",
-       6: "aluminium - acier",
-       7: "aluminium - acier",
-       8: "aluminium - acier",
-       9: "pile",
-       10: "pile",
-       11: "circuit",
-       12: "circuit"
+       2: "aluminium - inox",
+       3: "aluminium - inox",
+       4: "aluminium - acier",
+       5: "pile",
+       6: "pile",
+       7: "circuit",
+       8: "circuit"
        }
 
-num = 0   
+num = 4   
 filepath = files[num]
 
 def read(file_name):
@@ -55,6 +50,9 @@ def read(file_name):
     col = 1
     if df.shape[1] == 3:
         col = 2
+    arr = df.to_numpy()  
+    if Path(file_name).name == "tension_patate_aluacier_90925_01.lvm":
+        arr[:, 0] += 0.0085  
     return df.to_numpy()[:, :col]
 
 def moyenne(file_name, indice):
@@ -98,11 +96,13 @@ def graphiques_scatter(array):
     )
 
     ax = plt.gca()
-    ax.text(0.05, 0.88, f"v = {moyenne(filepath, 0):.3f}", transform=ax.transAxes)
-    ax.text(0.05, 0.83, f"s^2 = {variance(filepath, 0):.3f}", transform=ax.transAxes)
-    ax.text(0.05, 0.78, f"SNR = {snr(filepath, 0):.3f}", transform=ax.transAxes)
+    ax.text(0.05, 0.80, f"v = {moyenne(filepath, 0):.3f}", transform=ax.transAxes)
+    ax.text(0.05, 0.75, f"s^2 = {variance(filepath, 0):.3e}", transform=ax.transAxes)
+    ax.text(0.05, 0.70, f"SNR = {snr(filepath, 0):.3f}", transform=ax.transAxes)
 
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, f"_{nom[num]}.png"))
+
+    plt.show()
 
 graphiques_scatter(read(filepath))
