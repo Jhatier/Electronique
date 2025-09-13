@@ -59,7 +59,7 @@ def snr(file_name, indice):
 
 def incertitude(array, indice):
     col = array[:, indice]
-    return abs(np.std(col)/np.mean(col))
+    return 0.5 * (np.max(col) - np.min(col))
 
 def graphiques_scatter(array):
     fig = plt.gcf()

@@ -69,7 +69,6 @@ def read(file_name):
     return arr[:, :col]
 
 
-
 def moyenne(file_name):
     return np.average(read(file_name))
 

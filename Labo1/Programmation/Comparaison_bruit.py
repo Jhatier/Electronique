@@ -52,7 +52,7 @@ def read(file_name):
 
 def incertitude(array, indice):
     col = array[:, indice]
-    return abs(np.std(col)/np.mean(col))
+    return 0.5 * (np.max(col) - np.min(col))
 
 
 def graphiques_scatter(array):
@@ -76,9 +76,8 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     plt.title(
-        f"Fig. 1 - Tension mesurée lorsque le signal est nul et bruit gaussien."
-        " Les barres d'incertitude sur le signal nul sont présentes, mais ne sont pas visibles.",
-        y=-0.25
+        f"Fig. 1 - Tension mesurée lorsque le signal est nul et bruit gaussien.",
+        y=-0.15
     )
 
     plt.tight_layout()
