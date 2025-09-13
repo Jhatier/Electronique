@@ -11,37 +11,28 @@ os.makedirs(plot_dir, exist_ok=True)
 # Les fichiers de données
 files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
          'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #1
-         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #2
-         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #3
-         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #4
-         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #5
-         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #6
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #7
-         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #8
+         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #2
+         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #3
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #4
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #5
          ]
 
 # Descriptions et légendes
 description = {0: 'le convertisseur',
         2: "la pomme de terre avec une tige d'aluminium et d'inox",
-        3: "la pomme de terre avec une tige d'aluminium et d'inox",
-        4: "la pomme de terre avec une tige d'aluminium et d'acier",
-        5: "la pile",
-        6: "la pile",
-        7: "le circuit",
-        8: "le circuit"
+        3: "la pomme de terre avec une tige d'aluminium et d'acier",
+        4: "la pile",
+        5: "le circuit"
         }
 
 nom = {0: 'convertisseur',
        2: "aluminium - inox",
-       3: "aluminium - inox",
-       4: "aluminium - acier",
-       5: "pile",
-       6: "pile",
-       7: "circuit",
-       8: "circuit"
+       3: "aluminium - acier",
+       4: "pile",
+       5: "circuit"
        }
 
-num = 4   
+num = 2  
 filepath = files[num]
 
 def read(file_name):

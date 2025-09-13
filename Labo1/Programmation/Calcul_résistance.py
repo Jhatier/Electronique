@@ -10,22 +10,15 @@ os.makedirs(plot_dir, exist_ok=True)
 
 # Les fichiers de données dans l'ordres demandés par le protocoles. Cela permet de simplement appeler files[4] par ex.
 files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
-         'Labo1/Mesures/convertisseur_débranché_090925_01.lvm',     #1    
-         'Labo1/Mesures/convertisseur_débranché_090925_02.lvm',     #2
-         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #3
-         'Labo1/Mesures/tension_patate_aluinox_090925_01.lvm',      #4
-         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #5
-         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #6
-         'Labo1/Mesures/tension_patate_aluacier_90925_02.lvm',      #7
-         'Labo1/Mesures/tension_patate_aluacier_90925_03.lvm',      #8
-         'Labo1/Mesures/voltage_pile_090925_01.lvm',                #9
-         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #10
-         'Labo1/Mesures/voltage_circuit_090925_01.lvm',             #11
-         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #12
+         'Labo1/Mesures/convertisseur_débranché_100925_01.lvm',     #1
+         'Labo1/Mesures/tension_patate_aluinox_090925_02.lvm',      #2
+         'Labo1/Mesures/tension_patate_aluacier_90925_01.lvm',      #3
+         'Labo1/Mesures/voltage_pile_100925_01.lvm',                #4
+         'Labo1/Mesures/voltage_circuit_100925_01.lvm'              #5
          ]
 
 
-num = 12     # L'index du fichier utilisé.
+num = 5     # L'index du fichier utilisé.
 filepath = files[num]
 
 def read(file_name):
@@ -43,11 +36,26 @@ def extraction_colonne(array, indice):
 
 
 distribution_résistance = (lambda a: 12*a[:,0]/a[:,1])(read(filepath))
-print(np.average(distribution_résistance))      # Moyenne de la distribution
-print(np.median(distribution_résistance))   # Médiane de la distribution
-print((np.average(distribution_résistance)-1000)/10)    # Pourcentage d'écart
-print(np.std(distribution_résistance))  # Écart-type
-print(np.std(distribution_résistance)/np.mean(distribution_résistance))
+
+#print(np.average(distribution_résistance))      # Moyenne de la distribution
+#print(np.median(distribution_résistance))   # Médiane de la distribution
+#print((np.average(distribution_résistance)-1000)/10)    # Pourcentage d'écart
+#print(np.std(distribution_résistance))  # Écart-type
+#print(np.std(distribution_résistance)/np.mean(distribution_résistance))
+
+def moyenne(file_name, indice):
+    return float(np.mean(read(file_name)[:, indice]))
+
+def variance(file_name, indice):
+    return float(np.var(read(file_name)[:, indice], ddof=0))
+
+def snr(file_name, indice):
+    m = moyenne(file_name, indice); v = variance(file_name, indice)
+    return (m*m)/v if v != 0 else np.inf
+
+
+for i in range (0, 4):
+    print(snr(files[i], 0))
 
 def incertitude(array, indice):
     col = array[:, indice]
