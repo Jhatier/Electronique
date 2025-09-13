@@ -45,7 +45,9 @@ def extraction_colonne(array, indice):
 distribution_résistance = (lambda a: 12*a[:,0]/a[:,1])(read(filepath))
 print(np.average(distribution_résistance))      # Moyenne de la distribution
 print(np.median(distribution_résistance))   # Médiane de la distribution
-print((np.average(distribution_résistance)-1000)/10)    # Pourcentage d'écart 
+print((np.average(distribution_résistance)-1000)/10)    # Pourcentage d'écart
+print(np.std(distribution_résistance))  # Écart-type
+print(np.std(distribution_résistance)/np.mean(distribution_résistance))
 
 def incertitude(array, indice):
     col = array[:, indice]
