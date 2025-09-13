@@ -81,8 +81,29 @@ def graphiques_scatter(array):
     )
 
     plt.tight_layout()
-    plt.savefig(os.path.join(plot_dir, "signal_nul_vs_bruit.png"))
+    plt.savefig(plot_dir + "signal_nul_vs_bruit.png")
 
     plt.show()
 
-graphiques_scatter(read(filepath))
+
+def histogramme(array):
+    fig = plt.gcf()
+    fig.set_size_inches(10, 6)
+
+    plt.hist(array, bins=10, range=[-0.003, 0.005])
+
+    plt.xlabel("Tension [V]")
+    plt.ylabel("Jsp quoi mettre Jérémie aide moi")
+    plt.title("Fig. 9 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
+              "gaussien",
+              y=-0.15)
+
+    plt.tight_layout()
+    plt.savefig(plot_dir + "/histogramme.png")
+
+    plt.show()
+
+
+histogramme(read(filepath))
+
+# graphiques_scatter(read(filepath))
