@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from pathlib import Path
 
 
 # Choisir le directory pour les figures et le créer s'il n'existe pas.
@@ -50,18 +51,23 @@ nom = {0: 'convertisseur',
        12: "circuit"
        }
 
-num = 7     # L'index du fichier utilisé.
+num = 6     # L'index du fichier utilisé.
 filepath = files[num]
 
 def read(file_name):
     df = pd.read_csv(file_name, sep="\t", skiprows=22, decimal=",")
     df = df.iloc[:, 1:].copy()
 
-    col = 1 # On ne prend qu'une seule colonne si nous n'avons qu'une seule colonne de données.
-    if df.shape[1] == 3:    # On prend 2 colonnes si on a deux colonnes de données (3 colonnes données par pandas).
+    col = 1
+    if df.shape[1] == 3:
         col = 2
 
-    return df.to_numpy()[:, :col]
+    arr = df.to_numpy()  
+    if Path(file_name).name == "tension_patate_aluacier_90925_01.lvm":
+        arr[:, 0] += 0.0085  
+
+    return arr[:, :col]
+
 
 
 def moyenne(file_name):
