@@ -32,7 +32,7 @@ nom = {0: 'convertisseur',
        5: "circuit"
        }
 
-num = 2  
+num = 0  
 filepath = files[num]
 
 def read(file_name):
@@ -81,8 +81,7 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     plt.title(
-        f"Fig. 1 La tension dans {description[num]} et la tension mesurée lorsque\nle signal est nul."
-        f"\nLes barres d'incertitudes sur le signal nul sont présentes, mais difficilement visibles.",
+        f"Fig. 1 - Tension dans {description[num]} et tension mesurée lorsque le signal est nul.",
         y=-0.25
     )
 
