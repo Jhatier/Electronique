@@ -32,7 +32,7 @@ nom = {0: 'convertisseur',
        5: "circuit"
        }
 
-num = 0  
+num = 0
 filepath = files[num]
 
 def read(file_name):
@@ -58,7 +58,7 @@ def snr(file_name, indice):
 
 def incertitude(array, indice):
     col = array[:, indice]
-    return 0.5 * (np.max(col) - np.min(col))
+    return abs(np.std(col)/np.mean(col))
 
 def graphiques_scatter(array):
     fig = plt.gcf()
@@ -81,13 +81,14 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     plt.title(
-        f"Fig. 1 - Tension dans {description[num]} et tension mesurée lorsque le signal est nul.",
+        f"Fig. 1 - Tension dans {description[num]} et tension mesurée lorsque le\nsignal est nul."
+        " Les barres d'incertitude sur le signal nul sont présentes, mais ne sont pas visibles.",
         y=-0.25
     )
 
     ax = plt.gca()
     ax.text(0.05, 0.80, f"v = {moyenne(filepath, 0):.3f}", transform=ax.transAxes)
-    ax.text(0.05, 0.75, f"s^2 = {variance(filepath, 0):.3e}", transform=ax.transAxes)
+    ax.text(0.05, 0.75, r"$\sigma^2$" + f"= {variance(filepath, 0):.3e}", transform=ax.transAxes)
     ax.text(0.05, 0.70, f"SNR = {snr(filepath, 0):.3f}", transform=ax.transAxes)
 
     plt.tight_layout()
