@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 # Choisir le directory pour les figures et le créer s'il n'existe pas.
-plot_dir = os.path.join("Labo1/Figures/tension_constante")
+plot_dir = os.path.join("Labo1/Figures/signal_nul_vs_bruit_gaussien")
 os.makedirs(plot_dir, exist_ok=True)
 
 # Les fichiers de données
@@ -20,6 +20,7 @@ files = ['Labo1/Mesures/convertisseur_090925_01.lvm',               #0
 
 # Descriptions et légendes
 description = {0: 'le convertisseur',
+               1: "le signal nul",
                2: "la pomme de terre avec une tige d'aluminium et d'inox",
                3: "la pomme de terre avec une tige d'aluminium et d'acier",
                4: "la pile",
@@ -27,14 +28,15 @@ description = {0: 'le convertisseur',
                }
 
 nom = {0: 'convertisseur',
+       1: "signal nul",
        2: "aluminium - inox",
        3: "aluminium - acier",
        4: "pile",
        5: "circuit"
        }
 
-num = 2
-filepath = files[num]
+num = 1
+filepath = 'Labo1/Mesures/convertisseur_débranché_100925_01.lvm'
 
 def read(file_name):
     df = pd.read_csv(file_name, sep="\t", skiprows=22, decimal=",")
@@ -47,19 +49,11 @@ def read(file_name):
         arr[:, 0] += 0.0085  
     return df.to_numpy()[:, :col]
 
-def moyenne(file_name, indice):
-    return float(np.mean(read(file_name)[:, indice]))
-
-def variance(file_name, indice):
-    return float(np.var(read(file_name)[:, indice], ddof=0))
-
-def snr(file_name, indice):
-    m = moyenne(file_name, indice); v = variance(file_name, indice)
-    return (m*m)/v if v != 0 else np.inf
 
 def incertitude(array, indice):
     col = array[:, indice]
     return abs(np.std(col)/np.mean(col))
+
 
 def graphiques_scatter(array):
     fig = plt.gcf()
@@ -71,11 +65,9 @@ def graphiques_scatter(array):
     x_brt = np.arange(1, bruit.shape[0] + 1)
 
     plt.plot(x_sig, array[:, 0], markersize=0.75, linestyle='none', marker='o', label=nom[num])
-    plt.plot(x_brt,  bruit[:, 0], markersize=0.75, linestyle='none', marker='o', label="signal nul")
+    plt.plot(x_brt,  bruit[:, 1], markersize=0.75, linestyle='none', marker='o', label="bruit gaussien")
 
     plt.errorbar(x_sig, array[:, 0], yerr=incertitude(array, 0), fmt='none',
-                 elinewidth=0.6, capsize=1.5, alpha=0.6)
-    plt.errorbar(x_brt, bruit[:, 0], yerr=incertitude(array, 0), fmt='none',
                  elinewidth=0.6, capsize=1.5, alpha=0.6)
 
     plt.xlim(-5, 1015)
@@ -84,18 +76,13 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     plt.title(
-        f"Fig. 1 - Tension dans {description[num]} et tension mesurée lorsque le\nsignal est nul."
+        f"Fig. 1 - Tension mesurée lorsque le signal est nul et bruit gaussien."
         " Les barres d'incertitude sur le signal nul sont présentes, mais ne sont pas visibles.",
         y=-0.25
     )
 
-    ax = plt.gca()
-    ax.text(0.05, 0.80, f"v = {moyenne(filepath, 0):.3f}", transform=ax.transAxes)
-    ax.text(0.05, 0.75, r"$\sigma^2$" + f"= {variance(filepath, 0):.3e}", transform=ax.transAxes)
-    ax.text(0.05, 0.70, f"SNR = {snr(filepath, 0):.3f}", transform=ax.transAxes)
-
     plt.tight_layout()
-    plt.savefig(os.path.join(plot_dir, f"_{nom[num]}.png"))
+    plt.savefig(os.path.join(plot_dir, "signal_nul_vs_bruit.png"))
 
     plt.show()
 
