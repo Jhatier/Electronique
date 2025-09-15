@@ -95,7 +95,7 @@ def histogramme(array):
     plt.xlabel("Tension [V]")
     plt.ylabel("Nombre d'échantillons")
     plt.title("Fig. 6 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
-              "gaussien",
+              " gaussien",
               y=-0.15)
 
     plt.tight_layout()
@@ -104,6 +104,6 @@ def histogramme(array):
     plt.show()
 
 
-# histogramme(read(filepath))
+histogramme(read(filepath))
 
-graphiques_scatter(read(filepath))
+# graphiques_scatter(read(filepath))
