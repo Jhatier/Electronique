@@ -33,7 +33,7 @@ nom = {0: 'convertisseur',
        5: "circuit"
        }
 
-num = 2
+num = 3
 filepath = files[num]
 
 def read(file_name):
@@ -75,8 +75,8 @@ def graphiques_scatter(array):
 
     plt.errorbar(x_sig, array[:, 0], yerr=incertitude(array, 0), fmt='none',
                  elinewidth=0.6, capsize=1.5, alpha=0.6)
-    plt.errorbar(x_brt, bruit[:, 0], yerr=incertitude(array, 0), fmt='none',
-                 elinewidth=0.6, capsize=1.5, alpha=0.6)
+    plt.errorbar(x_brt, bruit[:, 0], yerr=incertitude(bruit, 0), fmt='none',
+                 elinewidth=0.6, capsize=1.5, alpha=0.6, color='orange')
 
     plt.xlim(-5, 1015)
     plt.legend()
