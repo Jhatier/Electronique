@@ -107,13 +107,15 @@ def histogramme(array):
     fig = plt.gcf()
     fig.set_size_inches(10, 6)
 
-    plt.hist(array, bins=10, range=[-0.003, 0.005])
+    labels = ["Tension du signal nul", "Bruit gaussien"]
+    plt.hist(array, bins=10, range=[-0.003, 0.005], label=labels)
 
     plt.xlabel("Tension [V]")
     plt.ylabel("Nombre d'échantillons")
     plt.title("Fig. 6 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
               " gaussien.",
               y=-0.15)
+    plt.legend()
 
     plt.tight_layout()
     plt.savefig(plot_dir + "/histogramme.png")
@@ -121,6 +123,6 @@ def histogramme(array):
     plt.show()
 
 
-# histogramme(read(filepath))
+histogramme(read(filepath))
 
-graphiques_scatter(read(filepath))
+# graphiques_scatter(read(filepath))
