@@ -79,6 +79,7 @@ def graphiques_scatter(array):
                  elinewidth=0.6, capsize=1.5, alpha=0.6, color='orange')
 
     plt.xlim(-5, 1015)
+    plt.ylim(-0.0027, 0.006)
     plt.legend()
     plt.xlabel("Numéro d'index de la mesure")
     plt.ylabel("Tension [V]")

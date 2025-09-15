@@ -50,6 +50,17 @@ def read(file_name):
     return df.to_numpy()[:, :col]
 
 
+def moyenne(file_name, indice):
+    return float(np.mean(read(file_name)[:, indice]))
+
+def variance(file_name, indice):
+    return float(np.var(read(file_name)[:, indice], ddof=0))
+
+def snr(file_name, indice):
+    m = moyenne(file_name, indice); v = variance(file_name, indice)
+    return (m*m)/v if v != 0 else np.inf
+
+
 def incertitude(array, indice):
     col = array[:, indice]
     return 0.5 * (np.max(col) - np.min(col))
@@ -71,6 +82,7 @@ def graphiques_scatter(array):
                  elinewidth=0.6, capsize=1.5, alpha=0.6)
 
     plt.xlim(-5, 1015)
+    plt.ylim(-0.003, 0.006)
     plt.legend()
     plt.xlabel("Numéro d'index de la mesure")
     plt.ylabel("Tension [V]")
@@ -79,6 +91,11 @@ def graphiques_scatter(array):
         f"Fig. 7 - Tension mesurée lorsque le signal est nul et bruit gaussien généré par LabVIEW.",
         y=-0.15
     )
+
+    ax = plt.gca()
+    ax.text(0.05, 0.95, f"Tension moyenne [V] = {moyenne(filepath, 0):.3f}", transform=ax.transAxes)
+    ax.text(0.05, 0.90, r"$\sigma^2$" + f"= {variance(filepath, 0):.3e}", transform=ax.transAxes)
+    ax.text(0.05, 0.85, f"SNR = {snr(filepath, 0):.3f}", transform=ax.transAxes)
 
     plt.tight_layout()
     plt.savefig(plot_dir + "/signal_nul_vs_bruit.png")
@@ -95,7 +112,7 @@ def histogramme(array):
     plt.xlabel("Tension [V]")
     plt.ylabel("Nombre d'échantillons")
     plt.title("Fig. 6 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
-              " gaussien",
+              " gaussien.",
               y=-0.15)
 
     plt.tight_layout()
@@ -104,6 +121,6 @@ def histogramme(array):
     plt.show()
 
 
-histogramme(read(filepath))
+# histogramme(read(filepath))
 
-# graphiques_scatter(read(filepath))
+graphiques_scatter(read(filepath))
