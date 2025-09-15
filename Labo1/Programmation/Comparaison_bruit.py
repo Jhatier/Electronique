@@ -76,12 +76,12 @@ def graphiques_scatter(array):
     plt.ylabel("Tension [V]")
 
     plt.title(
-        f"Fig. 1 - Tension mesurée lorsque le signal est nul et bruit gaussien.",
+        f"Fig. 7 - Tension mesurée lorsque le signal est nul et bruit gaussien généré par LabVIEW.",
         y=-0.15
     )
 
     plt.tight_layout()
-    plt.savefig(plot_dir + "signal_nul_vs_bruit.png")
+    plt.savefig(plot_dir + "/signal_nul_vs_bruit.png")
 
     plt.show()
 
@@ -93,8 +93,8 @@ def histogramme(array):
     plt.hist(array, bins=10, range=[-0.003, 0.005])
 
     plt.xlabel("Tension [V]")
-    plt.ylabel("Jsp quoi mettre Jérémie aide moi")
-    plt.title("Fig. 9 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
+    plt.ylabel("Nombre d'échantillons")
+    plt.title("Fig. 6 - La distribution des valeurs de tensions mesurées pour le signal nul et la distribution du bruit" \
               "gaussien",
               y=-0.15)
 
@@ -104,6 +104,6 @@ def histogramme(array):
     plt.show()
 
 
-histogramme(read(filepath))
+# histogramme(read(filepath))
 
-# graphiques_scatter(read(filepath))
+graphiques_scatter(read(filepath))
