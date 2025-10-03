@@ -1,8 +1,11 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
 import io, re
+import os
+
+from pathlib import Path
+
 
 # --- Fichiers / sortie ---
 FOR_FILE = Path("Labo3/Mesures/914b_donnees_iv_01.lvm")     # direct 0→1 V
@@ -76,7 +79,7 @@ plt.ylim(df["I"].min()-pady, df["I"].max()+pady)
 
 plt.xlabel("Tension V (V)")
 plt.ylabel("Courant I (A)")
-plt.title("Courant i-v de la diode standard comparée au modèle de Shockley")
+# plt.title("Courant i-v de la diode standard comparée au modèle de Shockley")
 plt.legend(title = "Légende 1 - Courbes étudiées")
 plt.tight_layout()
 plt.savefig(OUT_PNG)

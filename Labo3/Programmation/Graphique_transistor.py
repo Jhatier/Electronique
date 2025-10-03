@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
 import io, re, math
+
+from pathlib import Path
 
 DATA_FILE = Path("Labo3/Mesures/transistor_donnees_iv_01.lvm")
 OUT_PNG = Path("Labo3/Figures/transistor_ic_vc_ipla.png")
@@ -142,7 +143,7 @@ for i, (key, sub_raw) in enumerate(sorted(groups.items(), key=lambda kv: kv[0]))
 
 plt.xlabel("Tension (v_C) [V]")
 plt.ylabel("Courant (i_C) [A]")
-plt.title("Courant passant dans le transistor en fonction de la tension appliquée")
+# plt.title("Courant passant dans le transistor en fonction de la tension appliquée")
 plt.legend(title="Légende 1 - Valeur de V_b", ncol=2, frameon=True)
 plt.tight_layout()
 plt.savefig(OUT_PNG)

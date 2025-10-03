@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
 import io, re
+
+from pathlib import Path
 
 # ---------- Fichiers ----------
 FOR_FILE = Path("Labo3/Mesures/914b_donnees_iv_01.lvm")     # direct 0→1 V
@@ -66,9 +67,9 @@ Rd_s = pd.Series(Rd).rolling(window=SMOOTH_RD, center=True, min_periods=1).media
 # ---------- Tracé ----------
 plt.figure(figsize=(9,6))
 plt.plot(V, Rd_s, marker='o', markersize=3, linewidth=1)
-plt.xlabel("Tension (v_d) [V]")
-plt.ylabel("R_d = dV/dI (Ω)")
-plt.title("Résistance dynamique de la diode standard")
+plt.xlabel(r"Tension $v_d$ [V]")
+plt.ylabel(r"$R_d = \frac{dV}{dI} [\Omega]$")
+# plt.title("Résistance dynamique de la diode standard")
 plt.yscale("log")
 plt.tight_layout()
 plt.savefig(RD_PNG)
