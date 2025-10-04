@@ -68,7 +68,7 @@ Rd_s = pd.Series(Rd).rolling(window=SMOOTH_RD, center=True, min_periods=1).media
 plt.figure(figsize=(9,6))
 plt.plot(V, Rd_s, marker='o', markersize=3, linewidth=1)
 plt.xlabel(r"Tension $v_d$ [V]")
-plt.ylabel(r"$R_d = \frac{dV}{dI} [\Omega]$")
+plt.ylabel(r"$\log(R_d) = \log(\frac{dV}{dI}) [\Omega]$")
 # plt.title("Résistance dynamique de la diode standard")
 plt.yscale("log")
 plt.tight_layout()
