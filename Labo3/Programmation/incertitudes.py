@@ -67,6 +67,7 @@ def incvoltquatre(values: np.ndarray) -> np.ndarray:
 
     return incertitudes
 
+
 def incampquatre(values: np.ndarray) -> np.ndarray:
     """
     Courant DC multimètre 4 et demi
@@ -88,5 +89,65 @@ def incampquatre(values: np.ndarray) -> np.ndarray:
     incertitudes[inc1000] = 0.0025 * values[inc1000] + 1e-4 * 5
     inc10000 = (values > 5) & (values <= 20)
     incertitudes[inc10000] = 0.0025 * values[inc10000] + 0.001 * 5
+
+    return incertitudes
+
+
+def blocamp6v(values: np.ndarray) -> np.ndarray:
+    """
+    Courant sortie 6V du bloc d'alimentation
+
+    Fonction inspirée par celle de Félix
+    """
+    values = abs(values)
+
+    incertitudes = np.zeros_like(values, dtype=float)
+    inc01 = values
+    incertitudes[inc01] = 0.002 * values[inc01] + 0.01
+
+    return incertitudes
+
+
+def blocamp25v(values: np.ndarray) -> np.ndarray:
+    """
+    Courant sortie ±25V du bloc d'alimentation
+
+    Fonction inspirée par celle de Félix
+    """
+    values = abs(values)
+
+    incertitudes = np.zeros_like(values, dtype=float)
+    inc01 = values
+    incertitudes[inc01] = 0.0015 * values[inc01] + 0.004
+
+    return incertitudes
+
+
+def blocvolt6v(values: np.ndarray) -> np.ndarray:
+    """
+    Tension sortie ±6V du bloc d'alimentation
+
+    Fonction inspirée par celle de Félix
+    """
+    values = abs(values)
+
+    incertitudes = np.zeros_like(values, dtype=float)
+    inc01 = values
+    incertitudes[inc01] = 0.001 * values[inc01] + 0.005
+
+    return incertitudes
+
+
+def blocvolt25v(values: np.ndarray) -> np.ndarray:
+    """
+    Tension sortie ±25V du bloc d'alimentation
+
+    Fonction inspirée par celle de Félix
+    """
+    values = abs(values)
+
+    incertitudes = np.zeros_like(values, dtype=float)
+    inc01 = values
+    incertitudes[inc01] = 0.0005 * values[inc01] + 0.02
 
     return incertitudes
