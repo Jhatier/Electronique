@@ -34,9 +34,9 @@ def read_lvm_auto(path: Path):
 df_for = read_lvm_auto(FOR_FILE)
 df_rev = read_lvm_auto(REV_FILE)
 
-df_for["V"] =  np.abs(df_for["V"])
-if df_for["I"].median() < 0:
-    df_for["I"] = -df_for["I"]   # courant direct positif
+# df_for["V"] =  np.abs(df_for["V"])
+# if df_for["I"].median() < 0:
+#     df_for["I"] = -df_for["I"]   # courant direct positif
 
 df_rev["V"] = -np.abs(df_rev["V"])  # tensions négatives en inverse
 
@@ -68,7 +68,7 @@ Rd_s = pd.Series(Rd).rolling(window=SMOOTH_RD, center=True, min_periods=1).media
 plt.figure(figsize=(9,6))
 plt.plot(V, Rd_s, marker='o', markersize=3, linewidth=1)
 plt.xlabel(r"Tension $v_d$ [V]")
-plt.ylabel(r"$\log(R_d) = \log(\frac{dV}{dI}) [\Omega]$")
+plt.ylabel(r"$\log(\frac{dV}{dI}) [\Omega]$")
 # plt.title("Résistance dynamique de la diode standard")
 plt.yscale("log")
 plt.tight_layout()
