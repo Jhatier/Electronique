@@ -130,21 +130,26 @@ for i, (key, sub_raw) in enumerate(sorted(groups.items(), key=lambda kv: kv[0]))
 
     if abs(m) < ZERO_THRESH:
         if not zero_done:
-            plt.annotate(f"i_pla ≈ {fmt_val_unc(0.0, hw)}",
+            plt.annotate(r"$i_{pla}$ " f"≈ {fmt_val_unc(0.0, hw)}",
                          xy=(x_annot, 0.0),
                          xytext=(x_annot - 2.5*dx, 0.0 - 0.75*dy),
                          ha="left", va="bottom", color="black")
             zero_done = True
-    else:
-        plt.annotate(f"i_pla ≈ {fmt_val_unc(m, hw)}",
+    elif int(fmt_val_unc(m, hw).split("±")[0]) > 100:
+        plt.annotate(r"$i_{pla}$ " + f"≈ {fmt_val_unc(m, hw)}",
                      xy=(x_annot, m),
-                     xytext=(x_annot - 2.5*dx, m - 3.5*dy),
+                     xytext=(x_annot - 2.5*dx, m - 2.5*dy),
+                     ha="left", va="bottom", color="black")
+    else:
+        plt.annotate(r"$i_{pla}$ " + f"≈ {fmt_val_unc(m, hw)}",
+                     xy=(x_annot, m),
+                     xytext=(x_annot - 2.5*dx, m - 4.5*dy),
                      ha="left", va="bottom", color="black")
 
-plt.xlabel("Tension (v_C) [V]")
-plt.ylabel("Courant (i_C) [A]")
+plt.xlabel(r"$v_C$ [V]")
+plt.ylabel(r"$i_C$ [A]")
 # plt.title("Courant passant dans le transistor en fonction de la tension appliquée")
 plt.legend(title="Légende 1 - Valeur de V_b", ncol=2, frameon=True)
 plt.tight_layout()
 plt.savefig(OUT_PNG)
-plt.show()
+# plt.show()
