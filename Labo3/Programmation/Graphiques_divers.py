@@ -31,9 +31,11 @@ def read(file_name):
 
 data = read(filepath)
 
-plt.plot(data[:, 0], data[:, 1])
-plt.xlabel("Tension")
-plt.ylabel("Courant")
-plt.title(f"Courbe i-v de {filepath.split("/")[-1].split("_")[0]}")
-plt.savefig(plot_dir + f"courbe_i-v_{filepath.split("/")[-1].split("_")[0]}.png")
-plt.close()
+print(data)
+
+# plt.plot(data[:, 0], data[:, 1])
+# plt.xlabel("Tension")
+# plt.ylabel("Courant")
+# plt.title(f"Courbe i-v de {filepath.split("/")[-1].split("_")[0]}")
+# plt.savefig(plot_dir + f"courbe_i-v_{filepath.split("/")[-1].split("_")[0]}.png")
+# plt.close()
