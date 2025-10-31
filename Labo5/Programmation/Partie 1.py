@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 
 
@@ -12,6 +13,7 @@ def read(file_name):
 
     return df.to_numpy()[:, :2]
 
+
 def puissance_moyenne_dissipee(arr):
     """
     Prend un array avec la tension DC RMS et la résistance et retourne un array de même taille avec p_moy dissipée
@@ -21,8 +23,8 @@ def puissance_moyenne_dissipee(arr):
         La colonne 1 contient la résistance et la colonne deux contient la tension DC RMS
     
     Retourne
-    p_moy_dis : array
-        Array des puissances dissipées
+    array
+        Array des puissances dissipées moyennes et de la résistance
     """
     
     r = arr[:, 0]   # Colonne de résistance
@@ -30,4 +32,35 @@ def puissance_moyenne_dissipee(arr):
 
     p_moy_dis = v**2 / r    # Array de la puissance moyenne dissipée
 
-    return p_moy_dis
+    return np.array([p_moy_dis, r])
+
+
+def donnees_graphique(circuit):
+    """
+    Ressort un array de la résistance et de la puissance dissipée moyenne à utiliser pour le grpahique
+    
+    Paramètres
+    circuit : str {"c" ou "f"}
+        Indique si on travaille avec le circuit c ou f
+    
+    Retourne
+    array
+        array[0] donne la puissance moyenne dissipée moyenne et array[1] donne la résistance moyenne
+    """
+    print(circuit.lower(), type(circuit))
+    if circuit.lower() != "c" and circuit.lower() != "f":
+        raise TypeError("'circuit' doit être 'c' ou 'f'")
+    
+    r_moy = []
+    p_moy_dis_moy = []
+
+    for i in range(10):
+        file = f"mesures_{circuit.lower()}_{i}.lvm"
+        filepath = folder + file
+
+        arr_puissance = puissance_moyenne_dissipee(read(filepath))
+
+        r_moy.append(np.mean(arr_puissance[1]))
+        p_moy_dis_moy.append(np.mean(arr_puissance[0]))
+    
+    return np.array([p_moy_dis_moy, r_moy])
