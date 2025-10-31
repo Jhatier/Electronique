@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import os
 
 
@@ -64,3 +65,22 @@ def donnees_graphique(circuit):
         p_moy_dis_moy.append(np.mean(arr_puissance[0]))
     
     return np.array([p_moy_dis_moy, r_moy])
+
+
+def tracer_graphique(circuit):
+    """
+    Trace le graphique de la puissance moyenne dissipée selon la résistance. L'axe de la résistance est logarithmique
+    
+    Paramètres
+    circuit : str {"c" ou "f"}
+        Indique si on travaille avec le circuit c ou f
+    """
+
+    donnees = donnees_graphique(circuit)
+
+    plt.semilogx(donnees[1], donnees[0])
+    plt.xlim((0, 215))
+    plt.ylim((0, np.max(donnees[0])) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
+    plt.show()
+
+tracer_graphique("f")
