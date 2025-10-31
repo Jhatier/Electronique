@@ -81,6 +81,8 @@ def tracer_graphique(circuit):
     plt.semilogx(donnees[1], donnees[0])
     plt.xlim((0, 215))
     plt.ylim((0, np.max(donnees[0])) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
+    plt.xlabel(r"Résistance [$\Omega$]")
+    plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
 tracer_graphique("f")
