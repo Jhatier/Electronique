@@ -48,7 +48,6 @@ def donnees_graphique(circuit):
     array
         array[0] donne la puissance moyenne dissipée moyenne et array[1] donne la résistance moyenne
     """
-    print(circuit.lower(), type(circuit))
     if circuit.lower() != "c" and circuit.lower() != "f":
         raise TypeError("'circuit' doit être 'c' ou 'f'")
     
@@ -67,18 +66,56 @@ def donnees_graphique(circuit):
     return np.array([p_moy_dis_moy, r_moy])
 
 
-def tracer_graphique(circuit):
+def incertitude_graphique(circuit, sigma):
+    """
+    Ressort un array qui donne l'erreur en x et en y pour chaque point du graphique avec l'écart-type.
+    
+    Paramètres
+    circuit : str {"c" ou "f"}
+        Indique si on travaille avec le circuit c ou f
+    sigma : float
+        Le nombre d'écarts-types utilisé pour trouver l'incertitude.
+    
+    Retourne
+    array
+        array[0] donne l'incertitude sur la puissance moyenne dissipée moyenne et array[1] donne l'incertitude sur la
+        résistance moyenne
+    """
+    if circuit.lower() != "c" and circuit.lower() != "f":
+        raise TypeError("'circuit' doit être 'c' ou 'f'")
+    
+    r_err = []
+    p_moy_dis_err = []
+
+    for i in range(10):
+        file = f"mesures_{circuit.lower()}_{i}.lvm"
+        filepath = folder + file
+
+        arr_puissance = puissance_moyenne_dissipee(read(filepath))
+
+        r_err.append(sigma * np.std(arr_puissance[1]))
+        p_moy_dis_err.append(sigma * np.std(arr_puissance[0]))
+    
+    return np.array([p_moy_dis_err, r_err])
+
+
+def tracer_graphique(circuit, sigma=3):
     """
     Trace le graphique de la puissance moyenne dissipée selon la résistance. L'axe de la résistance est logarithmique
     
     Paramètres
     circuit : str {"c" ou "f"}
         Indique si on travaille avec le circuit c ou f
+    sigma : float
+        Le nombre d'écarts-types utilisé pour trouver l'incertitude.
     """
 
     donnees = donnees_graphique(circuit)
+    incertitude = incertitude_graphique(circuit, sigma)
 
-    plt.semilogx(donnees[1], donnees[0])
+    plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], capsize=4, linestyle='none',
+                 marker='o', markersize=3)
+    plt.xscale('log')
     plt.xlim((0, 215))
     plt.ylim((0, np.max(donnees[0])) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
     plt.xlabel(r"Résistance [$\Omega$]")
