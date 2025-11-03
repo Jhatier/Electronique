@@ -66,6 +66,37 @@ def donnees_graphique(circuit):
     return np.array([p_moy_dis_moy, r_moy])
 
 
+def resistance_inc(values: np.ndarray):
+    """
+    Calcule la valeur de l'incertitude sur la résistance selon le fabricant
+    
+    Paramètres
+    values : np.ndarray
+        Valeurs mesurées de la résistance
+
+    Retourne
+    incertitudes : np.ndarray
+        Array des incertitudes
+    """
+    incertitudes = np.zeros_like(values, dtype=float)
+    inc100 = values <= 100
+    incertitudes[inc100] = 0.00003 * values[inc100] + 0.00003 * 0.001
+    inc1k = (values > 100) & (values <= 1000)
+    incertitudes[inc1k] = 0.00002 * values[inc1k] + 0.000005 * 0.001
+    inc10k = (values > 1000) & (values <= 10000)
+    incertitudes[inc10k] = 0.00002 * values[inc10k] + 0.000005 * 0.0001
+    inc100k = (values > 10000) & (values <= 100000)
+    incertitudes[inc100k] = 0.00002 * values[inc100k] + 0.000005 * 0.00001
+    inc1M = (values > 100000) & (values <= 1000000)
+    incertitudes[inc1M] = 0.00002 * values[inc1M] + 0.00001 * 0.000005
+    inc10M = (values > 1000000) & (values <= 10000000)
+    incertitudes[inc10M] = 0.00015 * values[inc10M] + 0.00001 * 0.0000005
+    inc100M = (values > 10000000) & (values <= 100000000)
+    incertitudes[inc100M] = 0.003 * values[inc100M] + 0.0001 * 0.0000005
+
+    return incertitudes
+
+
 def incertitude_graphique(circuit, sigma):
     """
     Ressort un array qui donne l'erreur en x et en y pour chaque point du graphique avec l'écart-type.
@@ -93,7 +124,7 @@ def incertitude_graphique(circuit, sigma):
 
         arr_puissance = puissance_moyenne_dissipee(read(filepath))
 
-        r_err.append(sigma * np.std(arr_puissance[1]))
+        r_err.append(np.mean(resistance_inc(arr_puissance[1])))
         p_moy_dis_err.append(sigma * np.std(arr_puissance[0]))
     
     return np.array([p_moy_dis_err, r_err])
@@ -122,4 +153,4 @@ def tracer_graphique(circuit, sigma=3):
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-tracer_graphique("f")
+tracer_graphique("f", 1)
