@@ -161,8 +161,8 @@ def tracer_graphique(circuit):
     plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
                  marker='o', markersize=3)
     plt.xscale('log')
-    plt.xlim((0, 215))
-    plt.ylim((0, np.max(donnees[0])) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
+    plt.xlim(10, 215)
+    plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
     plt.xlabel(r"Résistance [$\Omega$]")
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
