@@ -97,7 +97,21 @@ def resistance_inc(values: np.ndarray):
     return incertitudes
 
 
-def incertitude_graphique(circuit, sigma):
+def puissance_inc(values):
+    """
+    values : array
+        l'array obtenu avec read(file)
+    """
+    unique = np.unique(values[:, 1])
+    try:
+        incertitude = unique[1] - unique[0]
+    except:
+        incertitude = 0.01
+
+    return np.mean(incertitude**2 / values[:, 0])
+
+
+def incertitude_graphique(circuit):
     """
     Ressort un array qui donne l'erreur en x et en y pour chaque point du graphique avec l'écart-type.
     
@@ -125,12 +139,12 @@ def incertitude_graphique(circuit, sigma):
         arr_puissance = puissance_moyenne_dissipee(read(filepath))
 
         r_err.append(np.mean(resistance_inc(arr_puissance[1])))
-        p_moy_dis_err.append(sigma * np.std(arr_puissance[0]))
+        p_moy_dis_err.append(puissance_inc(read(filepath)))
     
     return np.array([p_moy_dis_err, r_err])
 
 
-def tracer_graphique(circuit, sigma=3):
+def tracer_graphique(circuit):
     """
     Trace le graphique de la puissance moyenne dissipée selon la résistance. L'axe de la résistance est logarithmique
     
@@ -142,9 +156,9 @@ def tracer_graphique(circuit, sigma=3):
     """
 
     donnees = donnees_graphique(circuit)
-    incertitude = incertitude_graphique(circuit, sigma)
+    incertitude = incertitude_graphique(circuit)
 
-    plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], capsize=4, linestyle='none',
+    plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
                  marker='o', markersize=3)
     plt.xscale('log')
     plt.xlim((0, 215))
@@ -153,4 +167,4 @@ def tracer_graphique(circuit, sigma=3):
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-tracer_graphique("c", 1)
+tracer_graphique("c")
