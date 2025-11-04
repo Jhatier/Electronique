@@ -153,4 +153,4 @@ def tracer_graphique(circuit, sigma=3):
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-tracer_graphique("f", 1)
+tracer_graphique("c", 1)
