@@ -144,6 +144,34 @@ def incertitude_graphique(circuit):
     return np.array([p_moy_dis_err, r_err])
 
 
+def fonction_theorique(circuit, lim=(0,215)):
+    """
+    On rentre les bornes en x et le circuit pour lequel on veut faire la fonction et ça retourne un array de la courbe théorique.
+    
+    Paramètres
+    lim : tuple
+        les limites dans l'axe x
+    circuit : str {"c" ou "f"}
+        Indique si on travaille avec le circuit c ou f
+    
+    Retourne
+    array
+        un array 2D de la puissance dissipée théorique selon la puissance
+    """
+    # Fonction théorique pour le circuit purement résistif c)
+    r_ch = np.linspace(0, 200, 1000)
+    V_s = 1
+
+    r_s = 50
+    puissance = (r_ch * V_s**2) / (2 * (r_ch + r_s)**2)
+
+    # On fait des plots pour des tests
+    plt.plot(r_ch, puissance)
+    
+    plt.show()
+
+fonction_theorique("A")
+
 def tracer_graphique(circuit):
     """
     Trace le graphique de la puissance moyenne dissipée selon la résistance. L'axe de la résistance est logarithmique
@@ -167,4 +195,4 @@ def tracer_graphique(circuit):
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-tracer_graphique("c")
+# tracer_graphique("c")
