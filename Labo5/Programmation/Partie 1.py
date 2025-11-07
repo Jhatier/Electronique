@@ -144,7 +144,7 @@ def incertitude_graphique(circuit):
     return np.array([p_moy_dis_err, r_err])
 
 
-def fonction_theorique(circuit, lim=(0,215)):
+def fonction_theorique(circuit, V=1, lim=(0,215)):
     """
     On rentre les bornes en x et le circuit pour lequel on veut faire la fonction et ça retourne un array de la courbe théorique.
     
@@ -159,18 +159,16 @@ def fonction_theorique(circuit, lim=(0,215)):
         un array 2D de la puissance dissipée théorique selon la puissance
     """
     # Fonction théorique pour le circuit purement résistif c)
-    r_ch = np.linspace(0, 200, 1000)
-    V_s = 1
+    r_ch = np.linspace(lim[0], lim[1], 1000)
 
     r_s = 50
-    puissance = (r_ch * V_s**2) / (2 * (r_ch + r_s)**2)
+    puissance = (r_ch * V**2) / (2 * (r_ch + r_s)**2)
 
     # On fait des plots pour des tests
-    plt.plot(r_ch, puissance)
-    
-    plt.show()
-
-fonction_theorique("A")
+    # plt.plot(r_ch, puissance)
+    # 
+    # plt.show()
+    return np.array([puissance, r_ch])
 
 def tracer_graphique(circuit):
     """
@@ -182,17 +180,21 @@ def tracer_graphique(circuit):
     sigma : float
         Le nombre d'écarts-types utilisé pour trouver l'incertitude.
     """
+    limites_x = (10, 215)
 
     donnees = donnees_graphique(circuit)
     incertitude = incertitude_graphique(circuit)
 
+    puissance = fonction_theorique('c', 2.95, limites_x)
+
     plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
                  marker='o', markersize=3)
+    plt.plot(puissance[1], puissance[0])
     plt.xscale('log')
-    plt.xlim(10, 215)
+    plt.xlim(limites_x[0], limites_x[1])
     plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
     plt.xlabel(r"Résistance [$\Omega$]")
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-# tracer_graphique("c")
+tracer_graphique("c")
