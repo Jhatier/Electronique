@@ -216,7 +216,7 @@ def tracer_graphique(circuit):
     plt.xlim(limites_x[0], limites_x[1])
     plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
     plt.xlabel(r"Résistance [$\Omega$]")
-    plt.ylabel(r"Puissance moyenne dissipée [$W$]")
+    plt.ylabel(r"Puissance moyenne dissipée [W]")
     plt.show()
 
 tracer_graphique("f")

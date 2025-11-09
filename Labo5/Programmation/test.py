@@ -1,1 +1,2 @@
-print(float(4e-6 * 1000000))
+for i in range(6):
+    print(i)
