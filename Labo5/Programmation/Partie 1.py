@@ -29,9 +29,9 @@ def puissance_moyenne_dissipee(arr):
     """
     
     r = arr[:, 0]   # Colonne de résistance
-    v = arr[:, 1]   # Colonne de tension
+    v = arr[:, 1] / np.sqrt(10)  # Colonne de tension
 
-    p_moy_dis = v**2 / r    # Array de la puissance moyenne dissipée
+    p_moy_dis = (v)**2 / r    # Array de la puissance moyenne dissipée
 
     return np.array([p_moy_dis, r])
 
@@ -144,31 +144,53 @@ def incertitude_graphique(circuit):
     return np.array([p_moy_dis_err, r_err])
 
 
-def fonction_theorique(circuit, V=1, lim=(0,215)):
+def fonction_theorique(circuit, V=1, r_s=50, lim=(0,215)):
     """
     On rentre les bornes en x et le circuit pour lequel on veut faire la fonction et ça retourne un array de la courbe théorique.
     
     Paramètres
-    lim : tuple
-        les limites dans l'axe x
     circuit : str {"c" ou "f"}
         Indique si on travaille avec le circuit c ou f
+    V : float
+        Tension à la source
+    r_s : float
+        Résistance de la source
+    lim : tuple
+        les limites dans l'axe x
     
     Retourne
     array
-        un array 2D de la puissance dissipée théorique selon la puissance
+        un array 2D de la puissance dissipée théorique selon la résistance
     """
-    # Fonction théorique pour le circuit purement résistif c)
-    r_ch = np.linspace(lim[0], lim[1], 1000)
+    if circuit.lower() != "c" and circuit.lower() != "f":
+        raise TypeError("'circuit' doit être 'c' ou 'f'")
+    
+    if circuit == 'c':
+        r_ch = np.linspace(lim[0], lim[1], 1000)
 
-    r_s = 50
-    puissance = (r_ch * V**2) / (2 * (r_ch + r_s)**2)
+        puissance = (r_ch * V**2) / (2 * (r_ch + r_s)**2)
 
-    # On fait des plots pour des tests
-    # plt.plot(r_ch, puissance)
-    # 
-    # plt.show()
-    return np.array([puissance, r_ch])
+        return np.array([puissance, r_ch])
+    
+    if circuit == 'f':
+        # Définition de constantes utiles
+        w = 2000 * np.pi    # 2pi*f où f=1kHz
+        C = 4e-6            # La capacitance du condensateur
+        w2C2 = (w * C) ** 2 # Le carré du produit de w et C.
+
+        r_ch = np.linspace(lim[0], lim[1], 1000)
+
+        numérateur = r_ch * V**2 * (r_ch**2 + w2C2)**2          # C lè
+        dénominateur = 2 * (r_ch**2 * w2C2**2 + r_ch**4 * w2C2) # vréman lè
+
+        puissance = numérateur / dénominateur
+
+        plt.plot(r_ch, puissance)
+        plt.show()
+
+        return np.array([puissance, r_ch])
+        
+# fonction_theorique("f")
 
 def tracer_graphique(circuit):
     """
@@ -185,7 +207,7 @@ def tracer_graphique(circuit):
     donnees = donnees_graphique(circuit)
     incertitude = incertitude_graphique(circuit)
 
-    puissance = fonction_theorique('c', 2.95, limites_x)
+    puissance = fonction_theorique(circuit, 1, 50, limites_x)
 
     plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
                  marker='o', markersize=3)
@@ -197,4 +219,4 @@ def tracer_graphique(circuit):
     plt.ylabel(r"Puissance moyenne dissipée [$W$]")
     plt.show()
 
-tracer_graphique("c")
+tracer_graphique("f")
