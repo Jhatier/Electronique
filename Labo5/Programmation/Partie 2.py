@@ -62,7 +62,7 @@ def graphique(scope):
     plt.xlabel(r"Temps [s]")
     plt.ylabel(r"Tension [V]")
     plt.tight_layout()
-    plt.savefig(plot_dir+f"scope_{scope}")
+    plt.savefig(plot_dir+f"/scope_{scope}")
 
 for i in range(7):
     graphique(i)
