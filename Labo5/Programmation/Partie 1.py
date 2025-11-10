@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import os
 
+from scipy.optimize import curve_fit
+
 
 # Dossier où se trouvent les fichiers
 folder = os.path.join("Labo5/Mesures/Partie1/")
@@ -144,47 +146,40 @@ def incertitude_graphique(circuit):
     return np.array([p_moy_dis_err, r_err])
 
 
-def fonction_theorique(circuit, V=1, r_s=50, lim=(0,215)):
-    """
-    On rentre les bornes en x et le circuit pour lequel on veut faire la fonction et ça retourne un array de la courbe théorique.
-    
-    Paramètres
-    circuit : str {"c" ou "f"}
-        Indique si on travaille avec le circuit c ou f
-    V : float
-        Tension à la source
-    r_s : float
-        Résistance de la source
-    lim : tuple
-        les limites dans l'axe x
-    
-    Retourne
-    array
-        un array 2D de la puissance dissipée théorique selon la résistance
-    """
-    if circuit.lower() != "c" and circuit.lower() != "f":
-        raise TypeError("'circuit' doit être 'c' ou 'f'")
-    
-    if circuit == 'c':
-        r_ch = np.linspace(lim[0], lim[1], 1000)
+def fonction_theorique_c(r_ch, V=1, r_s=50):
+    puissance = (r_ch * V**2) / (2 * (r_ch + r_s)**2)
 
-        puissance = (r_ch * V**2) / (2 * (r_ch + r_s)**2)
+    return puissance
 
-        return np.array([puissance, r_ch])
-    
+
+def fonction_theorique_f(r_ch, V=1, r_s=50):
+    # Définition de constantes utiles
+    w = 2000 * np.pi    # 2pi*f où f=1kHz
+    C = 4e-6            # La capacitance du condensateur
+
+    numérateur = r_ch * V**2    # C lè
+    dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2) # vréman lè
+
+    puissance = numérateur / dénominateur
+
+    return puissance
+
+
+def fit(circuit):
+    data = donnees_graphique(circuit)
     if circuit == 'f':
-        # Définition de constantes utiles
-        w = 2000 * np.pi    # 2pi*f où f=1kHz
-        C = 4e-6            # La capacitance du condensateur
+        param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0])
+    if circuit == 'c':
+        param, param_cov = curve_fit(fonction_theorique_c, data[1], data[0])
 
-        r_ch = np.linspace(lim[0], lim[1], 1000)
+    r = np.linspace(10, 215, 1000)
+    w = 2000 * np.pi    # 2pi*f où f=1kHz
+    C = 4e-6            # La capacitance du condensateur
+    num = r * param[0]**2
+    dénom = 2 * ((param[1] + r)**2 + (param[1] * r * w *C)**2)
 
-        numérateur = r_ch * V**2    # C lè
-        dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2) # vréman lè
+    return num/dénom, param[0], param[1]
 
-        puissance = numérateur / dénominateur
-
-        return np.array([puissance, r_ch])
 
 def tracer_graphique(circuit):
     """
@@ -201,11 +196,14 @@ def tracer_graphique(circuit):
     donnees = donnees_graphique(circuit)
     incertitude = incertitude_graphique(circuit)
 
-    puissance = fonction_theorique(circuit, 1, 50, limites_x)
+    curve = fit(circuit)
+    puissance = curve[0]
+    V, r_s = curve[1], curve[2]
+    print(V, r_s)
 
     plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
                  marker='o', markersize=3)
-    plt.plot(puissance[1], puissance[0])
+    plt.plot(np.linspace(limites_x[0], limites_x[1], 1000), puissance)
     plt.xscale('log')
     plt.xlim(limites_x[0], limites_x[1])
     plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
@@ -213,4 +211,4 @@ def tracer_graphique(circuit):
     plt.ylabel(r"Puissance moyenne dissipée [W]")
     plt.show()
 
-tracer_graphique("f")
+tracer_graphique("c")
