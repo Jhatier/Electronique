@@ -157,8 +157,8 @@ def fonction_theorique_f(r_ch, V=1, r_s=50):
     w = 2000 * np.pi    # 2pi*f où f=1kHz
     C = 4e-6            # La capacitance du condensateur
 
-    numérateur = r_ch * V**2    # C lè
-    dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2) # vréman lè
+    numérateur = r_ch * V**2                                        # C lè
+    dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2)  # vréman lè
 
     puissance = numérateur / dénominateur
 
@@ -169,16 +169,21 @@ def fit(circuit):
     data = donnees_graphique(circuit)
     if circuit == 'f':
         param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0])
+
+        r = np.linspace(10, 215, 1000)
+        w = 2000 * np.pi    # 2pi*f où f=1kHz
+        C = 4e-6            # La capacitance du condensateur
+        num = r * param[0]**2
+        dénom = 2 * ((param[1] + r)**2 + (param[1] * r * w *C)**2)
+        puissance = num/dénom
+
     if circuit == 'c':
         param, param_cov = curve_fit(fonction_theorique_c, data[1], data[0])
 
-    r = np.linspace(10, 215, 1000)
-    w = 2000 * np.pi    # 2pi*f où f=1kHz
-    C = 4e-6            # La capacitance du condensateur
-    num = r * param[0]**2
-    dénom = 2 * ((param[1] + r)**2 + (param[1] * r * w *C)**2)
+        r = np.linspace(10, 215, 1000)
+        puissance = (r * param[0]**2) / (2 * (r + param[1])**2)
 
-    return num/dénom, param[0], param[1]
+    return puissance, param[0], param[1]
 
 
 def tracer_graphique(circuit):
