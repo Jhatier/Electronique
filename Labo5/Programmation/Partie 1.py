@@ -28,8 +28,8 @@ def puissance_moyenne_dissipee(arr):
         Array des puissances dissipées moyennes et de la résistance
     """
     
-    r = arr[:, 0]   # Colonne de résistance
-    v = arr[:, 1] / np.sqrt(10)  # Colonne de tension
+    r = arr[:, 1]   # Colonne de résistance
+    v = arr[:, 0] / 10  # Colonne de tension
 
     p_moy_dis = (v)**2 / r    # Array de la puissance moyenne dissipée
 
@@ -176,21 +176,15 @@ def fonction_theorique(circuit, V=1, r_s=50, lim=(0,215)):
         # Définition de constantes utiles
         w = 2000 * np.pi    # 2pi*f où f=1kHz
         C = 4e-6            # La capacitance du condensateur
-        w2C2 = (w * C) ** 2 # Le carré du produit de w et C.
 
         r_ch = np.linspace(lim[0], lim[1], 1000)
 
-        numérateur = r_ch * V**2 * (r_ch**2 + w2C2)**2          # C lè
-        dénominateur = 2 * (r_ch**2 * w2C2**2 + r_ch**4 * w2C2) # vréman lè
+        numérateur = r_ch * V**2    # C lè
+        dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2) # vréman lè
 
         puissance = numérateur / dénominateur
 
-        plt.plot(r_ch, puissance)
-        plt.show()
-
         return np.array([puissance, r_ch])
-        
-# fonction_theorique("f")
 
 def tracer_graphique(circuit):
     """
