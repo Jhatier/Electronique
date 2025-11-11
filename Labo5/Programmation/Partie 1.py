@@ -180,8 +180,8 @@ def fit(circuit):
 
         r = np.linspace(10, 215, 1000)
         puissance = (r * param[0]**2) / (2 * (r + param[1])**2)
-
-    return puissance, param[0], param[1]
+    
+    return puissance, param[0], param[1], param_cov
 
 
 def tracer_graphique(circuit):
@@ -202,7 +202,12 @@ def tracer_graphique(circuit):
     curve = fit(circuit)
     puissance = curve[0]
     V, r_s = curve[1], curve[2]
-    print(V, r_s)
+    cov = curve[3]
+    errs = np.sqrt(np.diag(cov))
+    inc_V, inc_r_s = errs[0], errs[1]
+
+    print(V, inc_V)
+    print(r_s, inc_r_s)
 
     plt.clf()
 
