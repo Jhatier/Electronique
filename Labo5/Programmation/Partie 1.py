@@ -10,6 +10,10 @@ from scipy.optimize import curve_fit
 # Dossier où se trouvent les fichiers
 folder = os.path.join("Labo5/Mesures/Partie1/")
 
+# Dossier pour plot les graphiques
+plot_dir = os.path.join("Labo5/Figures/Partie1")
+os.makedirs(plot_dir, exist_ok=True)
+
 def read(file_name):
     df = pd.read_csv(file_name, sep="\t", skiprows=21, decimal=",")
     df = df.iloc[:, 1:].copy()
@@ -30,12 +34,21 @@ def puissance_moyenne_dissipee(arr):
         Array des puissances dissipées moyennes et de la résistance
     """
     
-    r = arr[:, 1]   # Colonne de résistance
+    r = arr[:, 1]       # Colonne de résistance
     v = arr[:, 0] / 10  # Colonne de tension
 
     p_moy_dis = (v)**2 / r    # Array de la puissance moyenne dissipée
 
-    return np.array([p_moy_dis, r])
+    # Calcul des incertitudes
+    unique = np.unique(v)
+    try:
+        inc_v = unique[1] - unique[0]
+    except:
+        inc_v = 0.001
+    inc_r = resistance_inc(np.mean(r))
+    inc_p = np.mean(np.sqrt(p_moy_dis * (2 * (inc_v/v)**2 + (inc_r/r)**2))) # Devrait être l'incertitude
+
+    return np.array([p_moy_dis, r]), [inc_p, inc_r]
 
 
 def donnees_graphique(circuit):
@@ -60,7 +73,7 @@ def donnees_graphique(circuit):
         file = f"mesures_{circuit.lower()}_{i}.lvm"
         filepath = folder + file
 
-        arr_puissance = puissance_moyenne_dissipee(read(filepath))
+        arr_puissance, _ = puissance_moyenne_dissipee(read(filepath))
 
         r_moy.append(np.mean(arr_puissance[1]))
         p_moy_dis_moy.append(np.mean(arr_puissance[0]))
@@ -99,24 +112,9 @@ def resistance_inc(values: np.ndarray):
     return incertitudes
 
 
-def puissance_inc(values):
-    """
-    values : array
-        l'array obtenu avec read(file)
-    """
-    unique = np.unique(values[:, 1])
-    try:
-        incertitude = unique[1] - unique[0]
-    except:
-        incertitude = 0.01
-
-    return np.mean(incertitude**2 / values[:, 0])
-
-
 def incertitude_graphique(circuit):
     """
-    Ressort un array qui donne l'erreur en x et en y pour chaque point du graphique avec l'écart-type.
-    
+    Ressort un array qui donne l'erreur en x et en y.
     Paramètres
     circuit : str {"c" ou "f"}
         Indique si on travaille avec le circuit c ou f
@@ -138,10 +136,10 @@ def incertitude_graphique(circuit):
         file = f"mesures_{circuit.lower()}_{i}.lvm"
         filepath = folder + file
 
-        arr_puissance = puissance_moyenne_dissipee(read(filepath))
+        arr_puissance, inc = puissance_moyenne_dissipee(read(filepath))
 
-        r_err.append(np.mean(resistance_inc(arr_puissance[1])))
-        p_moy_dis_err.append(puissance_inc(read(filepath)))
+        r_err.append(inc[1])# np.mean(resistance_inc(arr_puissance[1])))
+        p_moy_dis_err.append(inc[0])
     
     return np.array([p_moy_dis_err, r_err])
 
@@ -206,14 +204,26 @@ def tracer_graphique(circuit):
     V, r_s = curve[1], curve[2]
     print(V, r_s)
 
+    plt.clf()
+
+    fig = plt.figure(figsize=(8,5))
+
+    plt.grid(True, which='both')
+
     plt.errorbar(donnees[1], donnees[0], xerr=incertitude[1], yerr=incertitude[0], linestyle='none',
-                 marker='o', markersize=3)
-    plt.plot(np.linspace(limites_x[0], limites_x[1], 1000), puissance)
+                 marker='o', markersize=3, label='Puissance (données expérimentales)')
+    plt.plot(np.linspace(limites_x[0], limites_x[1], 1000), puissance, label="Puissance (courbe théorique lissée avec scipy)")
+
     plt.xscale('log')
     plt.xlim(limites_x[0], limites_x[1])
-    plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.1)  # On va de 0 à 10% au-dessus de la valeur max en y
+    plt.ylim(0, np.max(donnees[0]) + np.max(donnees[0])*0.15)  # On va de 0 à 10% au-dessus de la valeur max en y
+
     plt.xlabel(r"Résistance [$\Omega$]")
     plt.ylabel(r"Puissance moyenne dissipée [W]")
-    plt.show()
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(plot_dir+f"/Circuit_{circuit}.png")
 
 tracer_graphique("c")
+tracer_graphique("f")
