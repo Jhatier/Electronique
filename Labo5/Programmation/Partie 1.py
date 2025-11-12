@@ -165,7 +165,7 @@ def fonction_theorique_f(r_ch, V=1, r_s=50):
 def fit(circuit):
     data = donnees_graphique(circuit)
     if circuit == 'f':
-        param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0], bounds=([0.98, -np.inf], [1.02, np.inf]))
+        param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0], bounds=([0.96, -np.inf], [1.04, np.inf]))
 
         r = np.linspace(10, 215, 1000)
         w = 2000 * np.pi    # 2pi*f où f=1kHz
@@ -228,5 +228,4 @@ def tracer_graphique(circuit):
     plt.tight_layout()
     plt.savefig(plot_dir+f"/Circuit_{circuit}.png")
 
-tracer_graphique("c")
 tracer_graphique("f")
