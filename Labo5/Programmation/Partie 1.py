@@ -46,7 +46,8 @@ def puissance_moyenne_dissipee(arr):
     except:
         inc_v = 0.001
     inc_r = resistance_inc(np.mean(r))
-    inc_p = np.mean(np.sqrt(p_moy_dis * (2 * (inc_v/v)**2 + (inc_r/r)**2))) # Devrait être l'incertitude
+    # inc_p = np.mean(np.sqrt(p_moy_dis**2 * (2 * (inc_v/v)**2 + (inc_r/r)**2))) # Devrait être l'incertitude
+    inc_p = np.mean((abs(2 * v * inc_v - v**2 * inc_r)) / r**2) # Devrait être l'incertitude
 
     return np.array([p_moy_dis, r]), [inc_p, inc_r]
 
@@ -95,19 +96,19 @@ def resistance_inc(values: np.ndarray):
     """
     incertitudes = np.zeros_like(values, dtype=float)
     inc100 = values <= 100
-    incertitudes[inc100] = 0.00003 * values[inc100] + 0.00003 * 0.001
+    incertitudes[inc100] = 0.00003 * values[inc100] + 0.00003 * 100
     inc1k = (values > 100) & (values <= 1000)
-    incertitudes[inc1k] = 0.00002 * values[inc1k] + 0.000005 * 0.001
+    incertitudes[inc1k] = 0.00002 * values[inc1k] + 0.000005 * 1000
     inc10k = (values > 1000) & (values <= 10000)
-    incertitudes[inc10k] = 0.00002 * values[inc10k] + 0.000005 * 0.0001
+    incertitudes[inc10k] = 0.00002 * values[inc10k] + 0.000005 * 10000
     inc100k = (values > 10000) & (values <= 100000)
-    incertitudes[inc100k] = 0.00002 * values[inc100k] + 0.000005 * 0.00001
+    incertitudes[inc100k] = 0.00002 * values[inc100k] + 0.000005 * 100000
     inc1M = (values > 100000) & (values <= 1000000)
-    incertitudes[inc1M] = 0.00002 * values[inc1M] + 0.00001 * 0.000005
+    incertitudes[inc1M] = 0.00002 * values[inc1M] + 0.00001 * 1000000
     inc10M = (values > 1000000) & (values <= 10000000)
-    incertitudes[inc10M] = 0.00015 * values[inc10M] + 0.00001 * 0.0000005
+    incertitudes[inc10M] = 0.00015 * values[inc10M] + 0.00001 * 10000000
     inc100M = (values > 10000000) & (values <= 100000000)
-    incertitudes[inc100M] = 0.003 * values[inc100M] + 0.0001 * 0.0000005
+    incertitudes[inc100M] = 0.003 * values[inc100M] + 0.0001 * 100000000
 
     return incertitudes
 
@@ -150,13 +151,12 @@ def fonction_theorique_c(r_ch, V=1, r_s=50):
     return puissance
 
 
-def fonction_theorique_f(r_ch, V=1, r_s=50):
+def fonction_theorique_f(r_ch, V=1, r_s=50, wC=0.02513):
     # Définition de constantes utiles
     w = 2000 * np.pi    # 2pi*f où f=1kHz
-    C = 4e-6            # La capacitance du condensateur
 
     numérateur = r_ch * V**2                                        # C lè
-    dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * w * C)**2)  # vréman lè
+    dénominateur = 2 * ((r_s + r_ch)**2 + (r_s * r_ch * wC)**2)  # vréman lè
 
     puissance = numérateur / dénominateur
 
@@ -165,13 +165,13 @@ def fonction_theorique_f(r_ch, V=1, r_s=50):
 def fit(circuit):
     data = donnees_graphique(circuit)
     if circuit == 'f':
-        param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0], bounds=([0.96, -np.inf], [1.04, np.inf]))
+        param, param_cov = curve_fit(fonction_theorique_f, data[1], data[0],
+                                     bounds=([0.96, 45, 0.01508], [1.04, 55, 0.03519]))
 
         r = np.linspace(10, 215, 1000)
         w = 2000 * np.pi    # 2pi*f où f=1kHz
-        C = 4e-6            # La capacitance du condensateur
         num = r * param[0]**2
-        dénom = 2 * ((param[1] + r)**2 + (param[1] * r * w *C)**2)
+        dénom = 2 * ((param[1] + r)**2 + (param[1] * r * param[2])**2)
         puissance = num/dénom
 
     if circuit == 'c':
@@ -179,9 +179,12 @@ def fit(circuit):
 
         r = np.linspace(10, 215, 1000)
         puissance = (r * param[0]**2) / (2 * (r + param[1])**2)
-    
-    return puissance, param[0], param[1], param_cov
 
+    return puissance, param, param_cov
+
+# curve, _, _, _ = fit('c')
+# maxi = np.argmax(curve)
+# print(np.linspace(10, 215, 1000)[maxi])
 
 def tracer_graphique(circuit):
     """
@@ -200,12 +203,21 @@ def tracer_graphique(circuit):
 
     curve = fit(circuit)
     puissance = curve[0]
-    V, r_s = curve[1], curve[2]
-    errs = np.sqrt(np.diag(curve[3]))
-    inc_V, inc_r_s = errs[0], errs[1]
+    if circuit == "f":
+        V, r_s, C = curve[1][0], curve[1][1], curve[1][2]
+        errs = np.sqrt(np.diag(curve[2]))
+        inc_V, inc_r_s, inc_C = errs[0], errs[1], errs[2]
 
-    print(V, inc_V)
-    print(r_s, inc_r_s)
+        print(V, inc_V)
+        print(r_s, inc_r_s)
+        print(C, inc_C)
+    elif circuit == "c":
+        V, r_s = curve[1][0], curve[1][1]
+        errs = np.sqrt(np.diag(curve[2]))
+        inc_V, inc_r_s = errs[0], errs[1]
+
+        print(V, inc_V)
+        print(r_s, inc_r_s)
 
     plt.clf()
 
@@ -229,3 +241,4 @@ def tracer_graphique(circuit):
     plt.savefig(plot_dir+f"/Circuit_{circuit}.png")
 
 tracer_graphique("f")
+tracer_graphique("c")
